@@ -6,16 +6,9 @@
 package validator;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import libsvm.svm;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
@@ -86,7 +79,7 @@ public class CrossValidator {
                                                     PropertiesSteps steps) {
         /* Copy parameters so we don't touch them */
         svm_parameter params_copy = copyParameters(params);
-        PrintWriter out = null;
+        PrintWriter out;
         
         try {
             out = new PrintWriter("../../CrossValidationLog.txt");
