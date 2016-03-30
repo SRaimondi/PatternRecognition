@@ -46,6 +46,7 @@ public class CSVReader {
         }
 
         br.close();
+        System.out.println("Loaded file: " + file_name);
     }
     
     /**
@@ -101,6 +102,7 @@ public class CSVReader {
                if (line.get(element) != 0) {
                    problem.x[i][index] = new svm_node();
                    problem.x[i][index].index = element - 1;
+                   /* Add value, normalized */
                    problem.x[i][index].value = (double)line.get(element) / 255.0;
                    index++;
                }
@@ -151,6 +153,7 @@ public class CSVReader {
                if (line.get(element) != 0) {
                    nodes[i][index] = new svm_node();
                    nodes[i][index].index = element - 1;
+                   /* Add value, normalized */
                    nodes[i][index].value = (double)line.get(element) / 255.0;
                    index++;
                }

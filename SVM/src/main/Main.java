@@ -8,6 +8,7 @@ package main;
 import reader.CSVReader;
 
 import libsvm.*;
+import validator.CrossValidator;
 
 /**
  *
@@ -27,12 +28,12 @@ public class Main {
         
         // default values
         params.svm_type = svm_parameter.C_SVC;
-        params.kernel_type = svm_parameter.LINEAR;
+        params.kernel_type = svm_parameter.RBF;
         params.degree = 3;
-        params.gamma = 0.5;
+        params.gamma = 1;
         params.coef0 = 0;
         params.nu = 0.5;
-        params.cache_size = 40;
+        params.cache_size = 100;
         params.C = 1;
         params.eps = 1e-3;
         params.p = 0.1;
@@ -42,15 +43,19 @@ public class Main {
         params.weight_label = new int[0];
         params.weight = new double[0];
         
-        svm_model model = svm.svm_train(problem, params);
+        /* Test cross classification */
+        double[] accuracy = CrossValidator.computeCrossValidationAccuracy(problem, params, 4); 
+        System.out.println("Cross validation accuracy: " + accuracy[0] * 100 + "%");
         
-        svm_node[][] test = CSVReader.setupSVMNodesArray("../../data/test_small.csv");
-        
-        /* Test classification */
-        for (svm_node[] test1 : test) {
-            double classification = svm.svm_predict(model, test1);
-            System.out.println("Classification: " + classification);
-        }
+//        svm_model model = svm.svm_train(problem, params);
+//        
+//        svm_node[][] test = CSVReader.setupSVMNodesArray("../../data/train_small.csv");
+//        
+//        /* Test classification */
+//        for (svm_node[] test1 : test) {
+//            double classification = svm.svm_predict(model, test1);
+//            System.out.println("Classification: " + classification);
+//        }
     }
     
 }
