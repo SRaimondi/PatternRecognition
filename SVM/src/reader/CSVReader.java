@@ -48,6 +48,11 @@ public class CSVReader {
         br.close();
     }
     
+    /**
+     * This method sets up a svm_problem form a given input file
+     * @param file_name Name of the file to use for the problem
+     * @return An svm_problem class that contains the loaded data
+     */
     public static svm_problem setupSVMProblem(String file_name) {
         svm_problem problem = new svm_problem();
         
@@ -96,7 +101,7 @@ public class CSVReader {
                if (line.get(element) != 0) {
                    problem.x[i][index] = new svm_node();
                    problem.x[i][index].index = element - 1;
-                   problem.x[i][index].value = line.get(element);
+                   problem.x[i][index].value = (double)line.get(element) / 255.0;
                    index++;
                }
            }
@@ -104,4 +109,54 @@ public class CSVReader {
         
         return problem;
     }
+    
+    /**
+     * This method creates a list of svm_node form a given input file
+     * @param file_name Name of the file to load the nodes from
+     * @return A 2d array representing the loaded data
+     */
+    public static svm_node[][] setupSVMNodesArray(String file_name) {
+        /* Load matrix from file */
+        List<ArrayList<Integer>> file = new ArrayList<>();
+        try {
+            readCSVFile(file_name, file);
+        } catch(Exception e) {
+            System.out.println("Error reading file: " + file_name);
+            System.out.println("Error message: " + e.getMessage());
+            return null;
+        }
+        
+        /* Allocate space for all nodes */
+        svm_node[][] nodes = new svm_node[file.size()][];
+        
+        /* Insert nodes values */
+        for (int i = 0; i < file.size(); i++) {
+           ArrayList<Integer> line = file.get(i);
+           /* Count number of non-zero entries */
+           int non_zero = 0;
+           for (int element = 1; element < line.size(); element++) {
+               if (line.get(element) != 0) {
+                   non_zero++;
+               }
+           }
+           
+           /* Allocate space */
+           if (non_zero != 0) {
+               nodes[i] = new svm_node[non_zero];
+           }
+           
+           /* Insert nodes values */
+           int index = 0;
+           for (int element = 1; element < line.size(); element++) {
+               if (line.get(element) != 0) {
+                   nodes[i][index] = new svm_node();
+                   nodes[i][index].index = element - 1;
+                   nodes[i][index].value = (double)line.get(element) / 255.0;
+                   index++;
+               }
+           }
+       }
+        
+        return nodes;
+    } 
 }
