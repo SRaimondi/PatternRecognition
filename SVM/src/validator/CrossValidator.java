@@ -82,12 +82,12 @@ public class CrossValidator {
         svm_parameter params_copy = copyParameters(params);
         
         /* Create file */
-        Logger logger = Logger.getLogger("../../CrossValidationLog.txt");
+        Logger logger = Logger.getLogger("CrossValidationLog.txt");
         FileHandler fh;
         
         try {  
             /* Configure the logger with handler and formatter */   
-            fh = new FileHandler("../../CrossValidationLog.txt");  
+            fh = new FileHandler("CrossValidationLog.txt");  
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();  
             fh.setFormatter(formatter);   
@@ -111,12 +111,14 @@ public class CrossValidator {
                 params_copy.kernel_type = steps.kernel_types[0];
                 /* Log the SVM type */
                 logger.log(Level.INFO, "Kernel type: {0}", params_copy.kernel_type);
-                
+                params_copy.C=params.C;
                 /* Loop over all the C values */
                 do {
                     /* Log the C value */
                     logger.log(Level.INFO, "C value: {0}", params_copy.C);
                     
+                    
+                    params_copy.gamma=params.gamma;
                     /* Loop over all the gamma value */
                     do {
                         /* Log the gamma value */
@@ -133,14 +135,15 @@ public class CrossValidator {
                         } else {
                             logger.log(Level.INFO, "Accuracy: {0}%", accuracy[0]);
                         }
-                        
-                    } while (params_copy.gamma <= steps.gamma_end);
-                    /* Increment gamma */
+                        System.out.println(params_copy.gamma);
+                   /* Increment gamma */
                     params_copy.gamma += steps.gamma_step;
+                    } while (params_copy.gamma <= steps.gamma_end);
                     
-                } while (params_copy.C <= steps.C_end);
                 /* Increment C */
                 params_copy.C += steps.C_step;
+                    
+                } while (params_copy.C <= steps.C_end);
                 
                 logger.log(Level.INFO, "\n");
             }
