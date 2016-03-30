@@ -9,6 +9,7 @@ import reader.CSVReader;
 
 import libsvm.*;
 import validator.CrossValidator;
+import validator.PropertiesSteps;
 
 /**
  *
@@ -30,7 +31,7 @@ public class Main {
         params.svm_type = svm_parameter.C_SVC;
         params.kernel_type = svm_parameter.RBF;
         params.degree = 3;
-        params.gamma = 1;
+        params.gamma = 0.1;
         params.coef0 = 0;
         params.nu = 0.5;
         params.cache_size = 100;
@@ -43,9 +44,26 @@ public class Main {
         params.weight_label = new int[0];
         params.weight = new double[0];
         
+        /* Create step structure */
+        PropertiesSteps steps = new PropertiesSteps();
+        
+        steps.kernel_types = new int[1];
+        steps.kernel_types[0] = svm_parameter.RBF;
+        
+        steps.svm_types = new int[1];
+        steps.svm_types[0] = svm_parameter.C_SVC;
+        
+        steps.C_end = 10;
+        steps.C_step = 1;
+        
+        steps.gamma_end = 1;
+        steps.gamma_step = 0.1;
+        
+        CrossValidator.produceCrossValidationReport(problem, params, 0, steps);
+        
         /* Test cross classification */
-        double[] accuracy = CrossValidator.computeCrossValidationAccuracy(problem, params, 4); 
-        System.out.println("Cross validation accuracy: " + accuracy[0] * 100 + "%");
+        // double[] accuracy = CrossValidator.computeCrossValidationAccuracy(problem, params, 4); 
+        // System.out.println("Cross validation accuracy: " + accuracy[0] * 100 + "%");
         
 //        svm_model model = svm.svm_train(problem, params);
 //        
