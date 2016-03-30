@@ -47,16 +47,17 @@ public class Main {
         /* Create step structure */
         PropertiesSteps steps = new PropertiesSteps();
         
-        steps.kernel_types = new int[1];
-        steps.kernel_types[0] = svm_parameter.RBF;
+        steps.kernel_types = new int[2];
+        steps.kernel_types[0] = svm_parameter.LINEAR;
+        steps.kernel_types[1] = svm_parameter.RBF;
         
         steps.svm_types = new int[1];
         steps.svm_types[0] = svm_parameter.C_SVC;
         
-        steps.C_end = 10;
+        steps.C_end = 2;
         steps.C_step = 1;
         
-        steps.gamma_end = 1;
+        steps.gamma_end = 0.2;
         steps.gamma_step = 0.1;
         
         CrossValidator.produceCrossValidationReport(problem, params, 0, steps);

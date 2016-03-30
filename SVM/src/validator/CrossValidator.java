@@ -5,7 +5,13 @@
  */
 package validator;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -80,21 +86,14 @@ public class CrossValidator {
                                                     PropertiesSteps steps) {
         /* Copy parameters so we don't touch them */
         svm_parameter params_copy = copyParameters(params);
+        PrintWriter out = null;
         
-        /* Create file */
-        Logger logger = Logger.getLogger("CrossValidationLog.txt");
-        FileHandler fh;
-        
-        try {  
-            /* Configure the logger with handler and formatter */   
-            fh = new FileHandler("CrossValidationLog.txt");  
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();  
-            fh.setFormatter(formatter);   
-
-        } catch (SecurityException | IOException e) {  
-            System.out.println(e.getMessage());
-        } 
+        try {
+            out = new PrintWriter("../../CrossValidationLog.txt");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CrossValidator.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
         
         /* Run cross validation for every possible set of parameters and log it to the file */
         
@@ -103,52 +102,70 @@ public class CrossValidator {
             /* Set svm type */
             params_copy.svm_type = steps.svm_types[s];
             /* Log the SVM type */
-            logger.log(Level.INFO, "SVM type: {0}", params_copy.svm_type);
+            String svm_type = "SVM type: " + params_copy.svm_type + "\n";
             
             /* Loop over all kernel types */
             for (int k = 0; k < steps.kernel_types.length; k++) {
                 /* Set kernel type */
-                params_copy.kernel_type = steps.kernel_types[0];
+                params_copy.kernel_type = steps.kernel_types[k];
                 /* Log the SVM type */
-                logger.log(Level.INFO, "Kernel type: {0}", params_copy.kernel_type);
-                params_copy.C=params.C;
+                String kernel_type = "Kernel type: " + params_copy.kernel_type + "\n";
+                
                 /* Loop over all the C values */
                 do {
                     /* Log the C value */
-                    logger.log(Level.INFO, "C value: {0}", params_copy.C);
+                    String C_value = "C value: " + params_copy.C + "\n";
                     
-                    
-                    params_copy.gamma=params.gamma;
                     /* Loop over all the gamma value */
                     do {
                         /* Log the gamma value */
-                        logger.log(Level.INFO, "Gamma value: {0}", params_copy.gamma);
+                        String gamma_value = "Gamma value: " + params_copy.gamma + "\n";
                         
                         /* Compute cross validation for current configuration */
                         double[] accuracy = computeCrossValidationAccuracy(problem, params_copy, n_folds);
                         
+                        String acc_value;
+                        String acc_value2 = null;
+                        
                         /* Log classification */
                         if (params_copy.svm_type == svm_parameter.EPSILON_SVR ||
                             params_copy.svm_type == svm_parameter.NU_SVR) {
-                            logger.log(Level.INFO, "Cross Validation Mean squared error: {0}%", accuracy[0]);
-                            logger.log(Level.INFO, "Cross Validation Squared correlation coefficient: {0}%", accuracy[1]);
+                            acc_value = "Cross Validation Mean squared error: " + accuracy[0] + "\n";
+                            acc_value2 = "Cross Validation Squared correlation coefficient: " + accuracy[1] + "\n";
                         } else {
-                            logger.log(Level.INFO, "Accuracy: {0}%", accuracy[0]);
+                            acc_value = "Accuracy: " + accuracy[0] * 100 + "%\n";
                         }
-                        System.out.println(params_copy.gamma);
-                   /* Increment gamma */
-                    params_copy.gamma += steps.gamma_step;
+                        
+                        /* Write everyting to file */
+                        out.print(svm_type);
+                        out.print(kernel_type);
+                        out.print(C_value);
+                        out.print(gamma_value);
+                        if (params_copy.svm_type == svm_parameter.EPSILON_SVR ||
+                            params_copy.svm_type == svm_parameter.NU_SVR) {
+                            out.print(acc_value);
+                            out.print(acc_value2);
+                        } else {
+                            out.print(acc_value);
+                        }
+                        out.print("\n");
+                        
+                        /* Increment gamma */
+                        params_copy.gamma += steps.gamma_step;
                     } while (params_copy.gamma <= steps.gamma_end);
+                    /* Reset gamma value */
+                    params_copy.gamma = params.gamma;
                     
                 /* Increment C */
-                params_copy.C += steps.C_step;
-                    
+                params_copy.C += steps.C_step;  
                 } while (params_copy.C <= steps.C_end);
-                
-                logger.log(Level.INFO, "\n");
+                /* Reset C value */
+                params_copy.C = params.C;
             }
         }
         
+        /* Close file */
+        out.close();
     }
     
     /**
