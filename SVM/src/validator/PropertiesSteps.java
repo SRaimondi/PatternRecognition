@@ -21,8 +21,8 @@ public class PropertiesSteps {
     public double gamma_step;
     
     /* Data for coef0, for polynomail and sigmoid kernels */
-    public double coef0_end;
-    public double coef0_step;
+    // public double coef0_end;
+    // public double coef0_step;
     
     /* Data on C */
     public double C_end;

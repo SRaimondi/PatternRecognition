@@ -7,6 +7,7 @@ package validator;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import libsvm.svm;
@@ -159,6 +160,64 @@ public class CrossValidator {
         
         /* Close file */
         out.close();
+    }
+    
+    /**
+     * This method returns a list of all the accurncy for a given configuration
+     * @param problem Problem to compute cross validation on
+     * @param params Starting parameters
+     * @param n_folds Number of folds
+     * @param steps Steps for the parameter variables
+     * @param result ArrayList containg all the configurations and the reulting accuracy
+     */
+    public static void produceCrossValidationData(  svm_problem problem, svm_parameter params, int n_folds,
+                                                    PropertiesSteps steps, ArrayList<AccuracyConfiguration> result) {
+        /* Copy parameters so we don't touch them */
+        svm_parameter params_copy = copyParameters(params);
+        
+        /* Run cross validation for every possible set of parameters and log it to the file */
+        
+        /* Loop over all svm types */
+        for (int s = 0; s < steps.svm_types.length; s++) {
+            /* Set svm type */
+            params_copy.svm_type = steps.svm_types[s];
+            
+            /* Loop over all kernel types */
+            for (int k = 0; k < steps.kernel_types.length; k++) {
+                /* Set kernel type */
+                params_copy.kernel_type = steps.kernel_types[k];
+                
+                /* Loop over all the C values */
+                do {
+                    /* Loop over all the gamma value */
+                    do {
+                        /* Store accuracy for given data */
+                        AccuracyConfiguration conf = new AccuracyConfiguration();
+                        
+                        /* Copy fields */
+                        conf.svm_type = params_copy.svm_type;
+                        conf.kernel_type = params_copy.kernel_type;
+                        conf.gamma = params_copy.gamma;
+                        conf.C = params_copy.C;
+                        /* Compute cross validation for current configuration */
+                        conf.accuracy = computeCrossValidationAccuracy(problem, params_copy, n_folds);
+                        
+                        /* Add configuration to result */
+                        result.add(conf);
+                        
+                        /* Increment gamma */
+                        params_copy.gamma += steps.gamma_step;
+                    } while (params_copy.gamma <= steps.gamma_end);
+                    /* Reset gamma value */
+                    params_copy.gamma = params.gamma;
+                    
+                /* Increment C */
+                params_copy.C += steps.C_step;  
+                } while (params_copy.C <= steps.C_end);
+                /* Reset C value */
+                params_copy.C = params.C;
+            }
+        }
     }
     
     /**
