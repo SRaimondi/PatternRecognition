@@ -3,32 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package svm;
+package main;
 
-import java.util.ArrayList;
-import java.util.List;
 import reader.CSVReader;
+
+import libsvm.*;
 
 /**
  *
  * @author Simone Raimondi
  */
-public class SVM {
+public class Main {
 
     /**
      * @param args the command line arguments
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        List<ArrayList<Integer>> file = new ArrayList<>();
-        CSVReader.readCSVFile("../../data/test_small.csv", file);
-        
-        file.stream().forEach((line) -> {
-            line.stream().forEach((e) -> {
-                System.out.print(e + " ");
-            });
-            System.out.println("");
-        });
+        svm_problem problem;
+        problem = CSVReader.setupSVMProblem("../../data/test_small.csv");
     }
     
 }
