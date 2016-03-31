@@ -130,7 +130,7 @@ public class CrossValidator {
         svm_parameter params_copy = copyParameters(params);
 
         /* Run cross validation for every possible set of parameters and log it to the file */
- /* Loop over all svm types */
+        /* Loop over all svm types */
         for (int s = 0; s < steps.svm_types.length; s++) {
             /* Set svm type */
             params_copy.svm_type = steps.svm_types[s];

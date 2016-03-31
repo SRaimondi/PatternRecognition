@@ -5,6 +5,7 @@
  */
 package main;
 
+import classifier.SVMClassifier;
 import java.util.ArrayList;
 import reader.CSVReader;
 
@@ -93,21 +94,8 @@ public class Main {
         /* Load test problem */
         svm_problem test_problem = CSVReader.setupSVMProblem("../../data/test_small.csv");
         
-        /* c_c_i = correctly classified instances */
-        int count = 0, c_c_i = 0;
-
-        /* Test classification */
-        for (svm_node[] test1 : test_problem.x) {
-            double classification = svm.svm_predict(model, test1);
-            System.out.println("Classification: " + classification + " / Actual class: " + test_problem.y[count]);
-
-            if (test_problem.y[count] == classification) {
-                c_c_i++;
-            }
-            count++;
-        }
-        
-        double test_acc = c_c_i / (double)test_problem.l;
+        double[] classification = new double[test_problem.l];
+        double test_acc = SVMClassifier.classifyElements(model, test_problem, classification);
 
         System.out.println("Accuracy on test set: " + test_acc * 100 + "%");
     }
