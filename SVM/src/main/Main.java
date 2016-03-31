@@ -65,28 +65,28 @@ public class Main {
 
         // CrossValidator.produceCrossValidationReport(problem, params, 2, steps);
 
-        ArrayList<AccuracyConfiguration> acc_conf = new ArrayList();
+        // ArrayList<AccuracyConfiguration> acc_conf = new ArrayList();
 
         /* 2 folds cross validation */
-        CrossValidator.produceCrossValidationData(problem, params, 2, steps, acc_conf);
+        // CrossValidator.produceCrossValidationData(problem, params, 2, steps, acc_conf);
         
         /* Select best parameters */
-        svm_parameter params_best = CrossValidator.copyParameters(params);
+        svm_parameter params_best = SVMClassifier.optimizeParameters(problem, params, 2, steps);
         
-        AccuracyConfiguration acc_best = acc_conf.get(0);
-        
-        //look up the best accuracy found during CV and change optimal parameters accordingly
-        for (AccuracyConfiguration conf : acc_conf) {
-            if (conf.accuracy[0] > acc_best.accuracy[0]) {
-                acc_best = conf;
-            }
-        }
-        
-        /* Copy best params */
-        params_best.svm_type = acc_best.svm_type;
-        params_best.kernel_type = acc_best.kernel_type;
-        params_best.C = acc_best.C;
-        params_best.gamma = acc_best.gamma;
+//        AccuracyConfiguration acc_best = acc_conf.get(0);
+//        
+//        //look up the best accuracy found during CV and change optimal parameters accordingly
+//        for (AccuracyConfiguration conf : acc_conf) {
+//            if (conf.accuracy[0] > acc_best.accuracy[0]) {
+//                acc_best = conf;
+//            }
+//        }
+//        
+//        /* Copy best params */
+//        params_best.svm_type = acc_best.svm_type;
+//        params_best.kernel_type = acc_best.kernel_type;
+//        params_best.C = acc_best.C;
+//        params_best.gamma = acc_best.gamma;
         
         /* Create model */
         svm_model model = svm.svm_train(problem, params_best);
