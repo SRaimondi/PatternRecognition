@@ -33,11 +33,11 @@ public class Main {
         params.svm_type = svm_parameter.C_SVC;
         params.kernel_type = svm_parameter.RBF;
         params.degree = 3;
-        params.gamma = Math.pow(2, -15);
+        params.gamma = Math.pow(2, -10);
         params.coef0 = 0;
         params.nu = 0.5;
         params.cache_size = 100;
-        params.C = Math.pow(2, -5);
+        params.C = 2;
         params.eps = 1e-3;
         params.p = 0.1;
         params.shrinking = 1;
@@ -67,7 +67,7 @@ public class Main {
         ArrayList<AccuracyConfiguration> acc_conf = new ArrayList();
 
         /* 2 folds cross validation */
-        CrossValidator.produceCrossValidationData(problem, params, 0, steps, acc_conf);
+        CrossValidator.produceCrossValidationData(problem, params, 2, steps, acc_conf);
         
         /* Select best parameters */
         svm_parameter params_best = CrossValidator.copyParameters(params);
