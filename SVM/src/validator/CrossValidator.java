@@ -90,72 +90,26 @@ public class CrossValidator {
         }
         
         /* Run cross validation for every possible set of parameters and log it to the file */
+        ArrayList<AccuracyConfiguration> accuracies = new ArrayList<>();
         
-        /* Loop over all svm types */
-        for (int s = 0; s < steps.svm_types.length; s++) {
-            /* Set svm type */
-            params_copy.svm_type = steps.svm_types[s];
-            /* Log the SVM type */
-            String svm_type = "SVM type: " + params_copy.svm_type + "\n";
-            
-            /* Loop over all kernel types */
-            for (int k = 0; k < steps.kernel_types.length; k++) {
-                /* Set kernel type */
-                params_copy.kernel_type = steps.kernel_types[k];
-                /* Log the SVM type */
-                String kernel_type = "Kernel type: " + params_copy.kernel_type + "\n";
-                
-                /* Loop over all the C values */
-                do {
-                    /* Log the C value */
-                    String C_value = "C value: " + params_copy.C + "\n";
-                    
-                    /* Loop over all the gamma value */
-                    do {
-                        /* Log the gamma value */
-                        String gamma_value = "Gamma value: " + params_copy.gamma + "\n";
-                        
-                        /* Compute cross validation for current configuration */
-                        double[] accuracy = computeCrossValidationAccuracy(problem, params_copy, n_folds);
-                        
-                        String acc_value;
-                        String acc_value2 = null;
-                        
-                        /* Log classification */
-                        if (params_copy.svm_type == svm_parameter.EPSILON_SVR ||
-                            params_copy.svm_type == svm_parameter.NU_SVR) {
-                            acc_value = "Cross Validation Mean squared error: " + accuracy[0] + "\n";
-                            acc_value2 = "Cross Validation Squared correlation coefficient: " + accuracy[1] + "\n";
-                        } else {
-                            acc_value = "Accuracy: " + accuracy[0] * 100 + "%\n";
-                        }
-                        
-                        /* Write everyting to file */
-                        out.print(svm_type);
-                        out.print(kernel_type);
-                        out.print(C_value);
-                        out.print(gamma_value);
-                        if (params_copy.svm_type == svm_parameter.EPSILON_SVR ||
-                            params_copy.svm_type == svm_parameter.NU_SVR) {
-                            out.print(acc_value);
-                            out.print(acc_value2);
-                        } else {
-                            out.print(acc_value);
-                        }
-                        out.print("\n");
-                        
-                        /* Increment gamma */
-                        params_copy.gamma += steps.gamma_step;
-                    } while (params_copy.gamma <= steps.gamma_end);
-                    /* Reset gamma value */
-                    params_copy.gamma = params.gamma;
-                    
-                /* Increment C */
-                params_copy.C += steps.C_step;  
-                } while (params_copy.C <= steps.C_end);
-                /* Reset C value */
-                params_copy.C = params.C;
+        produceCrossValidationData(problem, params, n_folds, steps, accuracies);
+        
+        /* Print data to the file */
+        for (AccuracyConfiguration acc : accuracies) {
+            /* Write everyting to file */
+            out.println("SVM type: " + acc.svm_type);
+            out.println("Kernel type: " + acc.kernel_type);
+            out.println("C value: " + acc.C);
+            out.println("Gamma value: " + acc.gamma);
+            if (params_copy.svm_type == svm_parameter.EPSILON_SVR ||
+                params_copy.svm_type == svm_parameter.NU_SVR) {
+                out.println("Cross Validation Mean squared error: " + acc.accuracy[0] * 100 + "%");
+                out.println("Cross Validation Squared correlation coefficient: " + acc.accuracy[1] * 100 + "%");
+            } else {
+                out.println("Accuracy: " + acc.accuracy[0] * 100 + "%");
             }
+            
+            out.print("\n");
         }
         
         /* Close file */
@@ -163,12 +117,12 @@ public class CrossValidator {
     }
     
     /**
-     * This method returns a list of all the accurncy for a given configuration
+     * This method returns a list of all the accuracy for a given configuration
      * @param problem Problem to compute cross validation on
      * @param params Starting parameters
      * @param n_folds Number of folds
      * @param steps Steps for the parameter variables
-     * @param result ArrayList containg all the configurations and the reulting accuracy
+     * @param result ArrayList containing all the configurations and the resulting accuracy
      */
     public static void produceCrossValidationData(  svm_problem problem, svm_parameter params, int n_folds,
                                                     PropertiesSteps steps, ArrayList<AccuracyConfiguration> result) {
