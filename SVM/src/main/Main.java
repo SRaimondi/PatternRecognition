@@ -62,48 +62,54 @@ public class Main {
         steps.gamma_end = Math.pow(2, 3);
         steps.gamma_step = 4;
 
-        CrossValidator.produceCrossValidationReport(problem, params, 0, steps);
+        // CrossValidator.produceCrossValidationReport(problem, params, 2, steps);
 
         ArrayList<AccuracyConfiguration> acc_conf = new ArrayList();
 
+        /* 2 folds cross validation */
         CrossValidator.produceCrossValidationData(problem, params, 0, steps, acc_conf);
-//a list of the optimal parameters
+        
+        /* Select best parameters */
         svm_parameter params_best = CrossValidator.copyParameters(params);
-        double acc_best = 0;
+        
+        AccuracyConfiguration acc_best = acc_conf.get(0);
+        
         //look up the best accuracy found during CV and change optimal parameters accordingly
         for (AccuracyConfiguration conf : acc_conf) {
-            if (conf.accuracy[0] > acc_best) {
-                acc_best = conf.accuracy[0];
-                params_best.svm_type = conf.svm_type;
-                params_best.kernel_type = conf.kernel_type;
-                params_best.C = conf.C;
-                params_best.gamma = conf.gamma;
+            if (conf.accuracy[0] > acc_best.accuracy[0]) {
+                acc_best = conf;
             }
         }
-        /*Test cross classification */
-//        double[] accuracy = CrossValidator.computeCrossValidationAccuracy(problem, params, 4); 
-        // System.out.println("Cross validation accuracy: " + accuracy[0] * 100 + "%");
+        
+        /* Copy best params */
+        params_best.svm_type = acc_best.svm_type;
+        params_best.kernel_type = acc_best.kernel_type;
+        params_best.C = acc_best.C;
+        params_best.gamma = acc_best.gamma;
+        
+        /* Create model */
         svm_model model = svm.svm_train(problem, params_best);
-        //get the actual classes of the test-set instances
-        ArrayList<Integer> actual_values = CSVReader.getActualValues("../../data/test_small.csv");
-        //c_c_i = correctly classified instances
+        
+        /* Load test problem */
+        svm_problem test_problem = CSVReader.setupSVMProblem("../../data/test_small.csv");
+        
+        /* c_c_i = correctly classified instances */
         int count = 0, c_c_i = 0;
-        svm_node[][] test = CSVReader.setupSVMNodesArray("../../data/test_small.csv");
 
         /* Test classification */
-        for (svm_node[] test1 : test) {
+        for (svm_node[] test1 : test_problem.x) {
             double classification = svm.svm_predict(model, test1);
-            System.out.println("Classification: " + classification + " / Actual class: " + actual_values.get(count));
+            System.out.println("Classification: " + classification + " / Actual class: " + test_problem.y[count]);
 
-            if (actual_values.get(count) == classification) {
+            if (test_problem.y[count] == classification) {
                 c_c_i++;
             }
             count++;
         }
-        double test_acc = c_c_i / (actual_values.size() + 0.0);
+        
+        double test_acc = c_c_i / (double)test_problem.l;
 
         System.out.println("Accuracy on test set: " + test_acc * 100 + "%");
-
     }
 
 }

@@ -61,7 +61,7 @@ public class CSVReader {
         List<ArrayList<Integer>> file = new ArrayList<>();
         try {
             readCSVFile(file_name, file);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Error reading file: " + file_name);
             System.out.println("Error message: " + e.getMessage());
             return null;
@@ -122,7 +122,7 @@ public class CSVReader {
         List<ArrayList<Integer>> file = new ArrayList<>();
         try {
             readCSVFile(file_name, file);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Error reading file: " + file_name);
             System.out.println("Error message: " + e.getMessage());
             return null;

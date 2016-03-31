@@ -160,13 +160,13 @@ public class CrossValidator {
                         result.add(conf);
                         
                         /* Increment gamma */
-                        params_copy.gamma += steps.gamma_step;
+                        params_copy.gamma *= steps.gamma_step;
                     } while (params_copy.gamma <= steps.gamma_end);
                     /* Reset gamma value */
                     params_copy.gamma = params.gamma;
                     
                 /* Increment C */
-                params_copy.C += steps.C_step;  
+                params_copy.C *= steps.C_step;  
                 } while (params_copy.C <= steps.C_end);
                 /* Reset C value */
                 params_copy.C = params.C;
@@ -179,7 +179,7 @@ public class CrossValidator {
      * @param orig_params Original svm_parameter
      * @return A copy of orig_params
      */
-    private static svm_parameter copyParameters(svm_parameter orig_params) {
+    public static svm_parameter copyParameters(svm_parameter orig_params) {
         svm_parameter copy = new svm_parameter();
         
         /* Copy parameter */
