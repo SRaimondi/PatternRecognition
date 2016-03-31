@@ -128,26 +128,25 @@ public class CrossValidator {
                                                     PropertiesSteps steps, ArrayList<AccuracyConfiguration> result) {
         /* Copy parameters so we don't touch them */
         svm_parameter params_copy = copyParameters(params);
-        
+
         /* Run cross validation for every possible set of parameters and log it to the file */
-        
-        /* Loop over all svm types */
+ /* Loop over all svm types */
         for (int s = 0; s < steps.svm_types.length; s++) {
             /* Set svm type */
             params_copy.svm_type = steps.svm_types[s];
-            
+
             /* Loop over all kernel types */
             for (int k = 0; k < steps.kernel_types.length; k++) {
                 /* Set kernel type */
                 params_copy.kernel_type = steps.kernel_types[k];
-                
+
                 /* Loop over all the C values */
                 do {
                     /* Loop over all the gamma value */
                     do {
                         /* Store accuracy for given data */
                         AccuracyConfiguration conf = new AccuracyConfiguration();
-                        
+
                         /* Copy fields */
                         conf.svm_type = params_copy.svm_type;
                         conf.kernel_type = params_copy.kernel_type;
@@ -155,33 +154,34 @@ public class CrossValidator {
                         conf.C = params_copy.C;
                         /* Compute cross validation for current configuration */
                         conf.accuracy = computeCrossValidationAccuracy(problem, params_copy, n_folds);
-                        
+
                         /* Add configuration to result */
                         result.add(conf);
-                        
+
                         /* Increment gamma */
-                        params_copy.gamma += steps.gamma_step;
+                        params_copy.gamma *= steps.gamma_step;
                     } while (params_copy.gamma <= steps.gamma_end);
                     /* Reset gamma value */
                     params_copy.gamma = params.gamma;
-                    
-                /* Increment C */
-                params_copy.C += steps.C_step;  
+
+                    /* Increment C */
+                    params_copy.C *= steps.C_step;
                 } while (params_copy.C <= steps.C_end);
                 /* Reset C value */
                 params_copy.C = params.C;
             }
         }
     }
-    
+
     /**
      * Copies all the fields of a given original svm_parameter class
+     *
      * @param orig_params Original svm_parameter
      * @return A copy of orig_params
      */
-    private static svm_parameter copyParameters(svm_parameter orig_params) {
+    public static svm_parameter copyParameters(svm_parameter orig_params) {
         svm_parameter copy = new svm_parameter();
-        
+
         /* Copy parameter */
         copy.svm_type = orig_params.svm_type;
         copy.kernel_type = orig_params.kernel_type;
@@ -192,22 +192,22 @@ public class CrossValidator {
         copy.eps = orig_params.eps;
         copy.C = orig_params.C;
         copy.nr_weight = orig_params.nr_weight;
-        
+
         copy.weight_label = new int[orig_params.weight_label.length];
         if (orig_params.weight_label.length != 0) {
             System.arraycopy(orig_params.weight_label, 0, copy.weight_label, 0, orig_params.weight_label.length);
         }
-        
+
         copy.weight = new double[orig_params.weight.length];
         if (orig_params.weight.length != 0) {
-            System.arraycopy(orig_params.weight, 0, copy.weight, 0, orig_params.weight.length);  
+            System.arraycopy(orig_params.weight, 0, copy.weight, 0, orig_params.weight.length);
         }
-        
+
         copy.nu = orig_params.nu;
         copy.p = orig_params.p;
         copy.shrinking = orig_params.shrinking;
         copy.probability = orig_params.probability;
-        
+
         return copy;
     }
 }
