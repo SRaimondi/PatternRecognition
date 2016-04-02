@@ -13,3 +13,6 @@ hs_err_pid*
 /SVM/nbproject/private/
 /SVM/build/
 /SVM/dist/ 
+/ANN/nbproject/private/
+/ANN/build/
+/ANN/dist/
