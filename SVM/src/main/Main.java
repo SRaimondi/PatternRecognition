@@ -6,12 +6,9 @@
 package main;
 
 import classifier.SVMClassifier;
-import java.util.ArrayList;
 import reader.CSVReader;
 
 import libsvm.*;
-import validator.AccuracyConfiguration;
-import validator.CrossValidator;
 import validator.PropertiesSteps;
 
 /**
