@@ -32,19 +32,19 @@ public class Input{
             testingNumbers.add(new Number(testing.get(i)));
         
         int num = trainingNumbers.get(0).lined.length;
-        ANN ann = new ANN(new int[]{num,100,1});
+        ANN ann = new ANN(new int[]{num,50,10});
         
-        for(int i = 0; i<1000; i++)
+        for(int i = 0; i<5000; i++)
             ann.train(trainingNumbers.get(i));
         
         double correct = 0;
-        for(int i = 0; i<1000; i++){
+        for(int i = 0; i<5000; i++){
             int t = ann.test(testingNumbers.get(i));
             System.out.println("actual: "+testingNumbers.get(i).number+" ann:"+t);
             if(testingNumbers.get(i).number == t)
                 correct++;
         }
-        System.out.println("Accuracy:"+correct/1000);
+        System.out.println("Accuracy:"+correct/5000);
         
     }
     public static class Number{

@@ -1,6 +1,15 @@
 package ann;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ann.Input.Number;
 
 
@@ -37,7 +46,7 @@ public class ANN {
             for(int k = 0; k<featureVector.length; k++){
                 weightedInput += inputLayer.nodes[i].weight[k]*featureVector[k];
             }    
-            inputLayer.nodes[i].value = weightedInput;
+            inputLayer.nodes[i].value = activate(weightedInput);
         }
         for(int i = 1; i < layers.length; i++){
             for(int d = 0; d<layers[i].nodes.length; d++){
@@ -45,13 +54,14 @@ public class ANN {
                 for(int k = 0; k<layers[i-1].nodes.length; k++){
                     weightedInput += layers[i].nodes[d].weight[k]*layers[i-1].nodes[k].value;
                 }    
-                layers[i].nodes[d].value = weightedInput;  
+                layers[i].nodes[d].value = activate(weightedInput);         //System.out.println(activate(weightedInput));
             }
         }    
 
         if(outputLayer.nodes.length == 1){//only one output node
-            outputLayer.nodes[0].error =  outputLayer.nodes[0].value - classLabel;                           
-            System.out.println(outputLayer.nodes[0].error );
+                       
+            outputLayer.nodes[0].error =  outputLayer.nodes[0].value - Math.pow(10,classLabel);                           
+            System.out.println("Num: "+num.number+" "+outputLayer.nodes[0].error );
 
             for(int i = layers.length-2; i>=0; i--){
                 for(int k = 0; k<layers[i].nodes.length; k++){
@@ -66,18 +76,22 @@ public class ANN {
             }
             for(int k = 0; k < inputLayer.nodes.length; k++){
                 for(int i = 0; i<featureVector.length; i++){
-                    inputLayer.nodes[k].weight[i] = inputLayer.nodes[k].weight[i] + learningRate*inputLayer.nodes[k].error*featureVector[i];// if add activation function, put derivative here  
+                    inputLayer.nodes[k].weight[i] = inputLayer.nodes[k].weight[i] + learningRate*inputLayer.nodes[k].error*derActivate(inputLayer.nodes[k].value)*featureVector[i];// if add activation function, put derivative here  
                 }
             }
             for(int i = 1; i<layers.length; i++){                  
                 for(Node n: layers[i].nodes){
                     for(int k = 0; k<layers[i-1].nodes.length; k++){
-                        n.weight[k] = n.weight[k] + learningRate*n.error*layers[i-1].nodes[k].value;// if add activation function, put derivative here  
+                        n.weight[k] = n.weight[k] + learningRate*n.error*derActivate(n.value)*layers[i-1].nodes[k].value;// if add activation function, put derivative here  
                     }
                 }
             }
         }else{//one node per class
-
+            for(int i = 0; i<outputLayer.nodes.length; i++)
+                if(outputLayer.nodes[i].value >= 0.9 && !(i == classLabel))
+                    outputLayer.nodes[i].error =  -outputLayer.nodes[i].value;   
+                else if(outputLayer.nodes[i].value < 0.9 && i == classLabel)
+                    outputLayer.nodes[i].error =  outputLayer.nodes[i].value; 
         }
         
     }
@@ -90,7 +104,7 @@ public class ANN {
             for(int k = 0; k<featureVector.length; k++){
                 weightedInput += inputLayer.nodes[i].weight[k]*featureVector[k];
             }    
-            inputLayer.nodes[i].value = weightedInput;
+            inputLayer.nodes[i].value = activate(weightedInput);
         }
         for(int i = 1; i < layers.length; i++){
             for(int d = 0; d<layers[i].nodes.length; d++){
@@ -98,23 +112,27 @@ public class ANN {
                 for(int k = 0; k<layers[i-1].nodes.length; k++){
                     weightedInput += layers[i].nodes[d].weight[k]*layers[i-1].nodes[k].value;
                 }    
-                layers[i].nodes[d].value = weightedInput;  
+                layers[i].nodes[d].value = activate(weightedInput);  
             }
         }    
 
         if(outputLayer.nodes.length == 1){//only one output node
-            double trim = ((double)((int)(outputLayer.nodes[0].value*100)))/100;
+            double trim = ((double)((int)(Math.log10(outputLayer.nodes[0].value)*100)))/100;
             //System.out.println(outputLayer.nodes[0y].value);
             return (int) trim;
         }else{//one node per class
-            return 0;
+            for(int i = 0; i<outputLayer.nodes.length; i++)
+                if(outputLayer.nodes[i].value >= 0.9)
+                    return i;
         }              
-
+        return 11;
     }
 
-
-
     public double activate(double in){
+        return Math.tan(in);
+    }
+
+    public double derActivate(double in){
         return Math.tanh(in);
     }
 }
