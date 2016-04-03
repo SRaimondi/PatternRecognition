@@ -32,7 +32,7 @@ public class Input{
             testingNumbers.add(new Number(testing.get(i)));
         
         int num = trainingNumbers.get(0).lined.length;
-        ANN ann = new ANN(new int[]{num,50,10});
+        ANN ann = new ANN(new int[]{num,100,10});
         
         for(int i = 0; i<5000; i++)
             ann.train(trainingNumbers.get(i));
