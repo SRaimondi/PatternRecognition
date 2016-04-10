@@ -14,6 +14,8 @@ public class Number {
     public double[] histogramH = new  double[imageSize];
     public double[] transitionsV = new  double[imageSize];
     public double[] transitionsH = new  double[imageSize];
+    public double[] firstBlackV = new double[imageSize];
+    public double[] firstBlackH = new double[imageSize];
     public Number(String line){
         String[] data = line.split(",");
         number = Integer.parseInt(data[0]);
@@ -26,6 +28,8 @@ public class Number {
         histogramH = histogramH(picture);
         transitionsV = transitionsV(picture);
         transitionsH = transitionsH(picture);
+        firstBlackV = firstBlackV(picture);
+        firstBlackH = firstBlackH(picture);
     }
     public BufferedImage getImage(){
         BufferedImage graph = new BufferedImage( imageSize, imageSize, BufferedImage.TYPE_INT_RGB);
@@ -71,7 +75,7 @@ public class Number {
         }catch(ArrayIndexOutOfBoundsException e){}
         return transitions;
     }
-    public static double[] transitionsH(int[][] pic){//vertical transitions
+    public static double[] transitionsH(int[][] pic){//horizontal transitions
         double[] transitions = new double[imageSize+1];
         try{
             for(int k = 0; k < imageSize;k++)
@@ -80,5 +84,25 @@ public class Number {
                         transitions[k]++;
         }catch(ArrayIndexOutOfBoundsException e){}
         return transitions;
+    }
+        public static double[] firstBlackH(int[][] pic){
+        double[] firstBlack = new double[imageSize+1];
+        try{
+            for(int k = 0; k < imageSize;k++)
+                for(int i = 0; i < imageSize; i++)
+                    if(pic[k][i] != 0) 
+                        firstBlack[k] = i;
+        }catch(ArrayIndexOutOfBoundsException e){}
+        return firstBlack;
+    }
+    public static double[] firstBlackV(int[][] pic){
+        double[] firstBlack = new double[imageSize+1];
+        try{
+            for(int k = 0; k < imageSize;k++)
+                for(int i = 0; i < imageSize; i++)
+                    if(pic[i][k] != 0) 
+                        firstBlack[k] = i;
+        }catch(ArrayIndexOutOfBoundsException e){}
+        return firstBlack;
     }
 }

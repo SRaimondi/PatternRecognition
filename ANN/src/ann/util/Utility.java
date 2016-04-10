@@ -8,6 +8,41 @@ import java.awt.image.BufferedImage;
  * @author jonathan
  */
 public class Utility {
+    public static int highestEntry(double[] arr){
+        double highest = 0;
+        int index = -1;
+        for(int i = 0; i<arr.length; i++)
+            if(arr[i]>highest){
+                highest = arr[i];
+                index = i;
+            }
+        return index;
+    }
+    
+    public static double[] addUp(double[] arr1, double[] arr2){
+        if(arr1.length!=arr2.length)
+            return null;
+        double[] arr = new double[arr1.length];
+        for(int i = 0; i<arr1.length; i++)
+            arr[i] = arr1[i] + arr2[i];
+        return arr;
+    }
+        public static double[] divideArray(double[] arr1, double by){
+        double[] arr = new double[arr1.length];
+        for(int i = 0; i<arr1.length; i++)
+            arr[i] = arr1[i]/by;
+        return arr;
+    }
+    
+    public static boolean arraysAreEqual(double[] arr1, double[] arr2, double error){
+        boolean equality = false;
+        if(arr1.length!=arr2.length)
+            return false;
+        for(int i = 0; i<arr1.length; i++)
+            if(Math.abs(arr1[i]-arr2[i])>error)
+                return false;
+        return true;
+    }
     public static BufferedImage binarize(BufferedImage original) {
         int red;
         int newPixel;
