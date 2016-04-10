@@ -3,6 +3,7 @@ package ann;
 import ann.util.Number;
 import ann.util.Utility;
 import static ann.util.Utility.addUp;
+import static ann.util.Utility.addUpDiv;
 import static ann.util.Utility.arraysAreEqual;
 import static ann.util.Utility.divideArray;
 import static ann.util.Utility.highestEntry;
@@ -30,12 +31,12 @@ public class Input{
     static double learningRate = 0.1;
     static double momentum = 0.1;
     
-    public static void main(String[] args)throws IOException{
-
-        BufferedImage im = ImageIO.read(Input.class.getResourceAsStream("image.png"));
-
+    public static void main(String[] args)throws IOException{   
+        File f = new File("src/data/image.png");
+        BufferedImage im = ImageIO.read(f);
+        
         im = Utility.binarize(im);
-        File outputfile = new File("src/ann/bw.png");
+        File outputfile = new File("src/data/bw.png");
         ImageIO.write(im, "png", outputfile);
         
         
@@ -57,8 +58,8 @@ public class Input{
         for(int i = 0; i<testing.size(); i++)
             testingNumbers.add(new Number(testing.get(i)));
         
-        //normalize(trainingNumbers);
-        //normalize(testingNumbers);
+        normalize(trainingNumbers);
+        normalize(testingNumbers);
         System.out.println("Input normalized."); 
         
         
@@ -68,8 +69,16 @@ public class Input{
         double[][] input = new double[elements][featureSize];
         double[][] output = new double[elements][10];
         
-        for(int i = 0; i<elements; i++){
-            input[i] = divideArray(addUp(addUp(trainingNumbers.get(i).histogramV,trainingNumbers.get(i).histogramH),addUp(trainingNumbers.get(i).transitionsH,trainingNumbers.get(i).transitionsV)),4);
+        for(int i = 0; i<elements; i++){//System.out.println(Arrays.toString(divideArray(addUp(addUp(trainingNumbers.get(i).histogramV,trainingNumbers.get(i).histogramH),addUp(trainingNumbers.get(i).transitionsH,trainingNumbers.get(i).transitionsV)),4)));
+            input[i] = divideArray(
+                            addUp(
+                                addUp(
+                                    addUp(trainingNumbers.get(i).histogramV,trainingNumbers.get(i).histogramH),
+                                    addUp(trainingNumbers.get(i).transitionsV,trainingNumbers.get(i).transitionsH)
+                                ),
+                                    addUp(trainingNumbers.get(i).firstBlackV,trainingNumbers.get(i).firstBlackH)
+                            )
+                        ,4);
             
             output[i] = new double[10];
             for(int j = 0; j<10; j++)
@@ -101,7 +110,15 @@ public class Input{
         System.out.println("Network trained."); 
         
         for(int i = 0; i<elements; i++){
-            input[i] = divideArray(addUp(addUp(testingNumbers.get(i).histogramV,testingNumbers.get(i).histogramH),addUp(testingNumbers.get(i).transitionsH,testingNumbers.get(i).transitionsV)),4);//divideArray(addUp(testingNumbers.get(i).histogramV,testingNumbers.get(i).histogramH),2);
+            input[i] = divideArray(
+                            addUp(
+                                addUp(
+                                    addUp(testingNumbers.get(i).histogramV,testingNumbers.get(i).histogramH),
+                                    addUp(testingNumbers.get(i).transitionsV,testingNumbers.get(i).transitionsH)
+                                ),
+                                    addUp(testingNumbers.get(i).firstBlackV,testingNumbers.get(i).firstBlackH)
+                            )
+                        ,4);
             
             output[i] = new double[10];
             for(int j = 0; j<10 ; j++)
@@ -126,16 +143,33 @@ public class Input{
 
     
     private static void normalize(List<Number> num){
-        double min = 0; 
-        double max = 28;
-        for(Number n : num)
-            for(int i = 0; i<n.histogramH.length; i++){
-                n.histogramH[i] = n.histogramH[i] /28;
+        for(Number n : num){
+            norm(n.histogramH);
+            norm(n.histogramV);
+            norm(n.transitionsH);
+            norm(n.transitionsV);
+            norm(n.firstBlackH);
+            norm(n.firstBlackV);
+        }
+                
+    }
+    private static void norm(double[] arr){
+        double min = Double.MAX_VALUE; 
+        double max = 0;
+        for(int i = 0; i<arr.length; i++){
+            if(arr[i] < min)
+                min = arr[i];
+            if(arr[i] > max)
+                max = arr[i];  
+            }
+        for(int i = 0; i<arr.length; i++){
+            if(max-min !=0)
+                arr[i] = (arr[i]-min)/(max-min);
+        }
+    }
+}
+/*
                 n.histogramV[i] = n.histogramV[i] /28;
                 n.transitionsH[i] = n.transitionsH[i] /28;
                 n.transitionsV[i] = n.transitionsV[i] /28;
-            }
-                
-    }
-    
-}
+*/

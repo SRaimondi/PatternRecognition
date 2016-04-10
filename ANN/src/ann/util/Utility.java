@@ -2,6 +2,7 @@ package ann.util;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 /**
  *
@@ -19,6 +20,16 @@ public class Utility {
         return index;
     }
     
+    public static double[] addUpDiv(double by, double[] arr1, double[]... arrays){
+        double[] arr = Arrays.copyOf(arr1,arr1.length);
+        for(double[] a: arrays)
+            for(int i = 0; i<a.length; i++)
+                arr[i] += a[i];
+        for(int i = 0; i<arr.length; i++)
+            arr[i] /= by;     
+        return arr;
+    }
+    
     public static double[] addUp(double[] arr1, double[] arr2){
         if(arr1.length!=arr2.length)
             return null;
@@ -27,7 +38,7 @@ public class Utility {
             arr[i] = arr1[i] + arr2[i];
         return arr;
     }
-        public static double[] divideArray(double[] arr1, double by){
+    public static double[] divideArray(double[] arr1, double by){
         double[] arr = new double[arr1.length];
         for(int i = 0; i<arr1.length; i++)
             arr[i] = arr1[i]/by;
