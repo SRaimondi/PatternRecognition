@@ -21,11 +21,6 @@ import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.train.MLTrain;
-import org.neuroph.core.NeuralNetwork;
-import org.neuroph.core.data.DataSet;
-import org.neuroph.core.data.DataSetRow;
-import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.Perceptron;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.propagation.back.Backpropagation;
@@ -127,69 +122,6 @@ public class Input{
                 correct++;
         }
         System.out.println("Accuracy: " +correct/elements);
-        
-        /*
-        NeuralNetwork neuralNetwork = new Perceptron(2, 1);  
-        DataSet trainingSet = new  DataSet(2, 1);
-        trainingSet.addRow (new DataSetRow (new double[]{0, 0},  new double[]{0})); 
-        trainingSet.addRow (new DataSetRow (new double[]{0, 1},  new double[]{1})); 
-        trainingSet.addRow (new DataSetRow (new double[]{1, 0},  new double[]{2})); 
-        trainingSet.addRow (new DataSetRow (new double[]{1, 1},  new double[]{1})); 
-
-        neuralNetwork.learn(trainingSet);
-        neuralNetwork.setInput(1, 0);  
-        neuralNetwork.calculate();  
-        double[] networkOutput = neuralNetwork.getOutput();
-        System.out.println(Arrays.toString(networkOutput));
-        
-        /*
-       
-        NeuralNetwork neuralNetwork = new MultiLayerPerceptron(num,10); 
-        DataSet trainingSet = new  DataSet(num, 10);
-        int elements = 200;
-        
-        for(int i = 0; i<elements; i++){
-            double[] vec = new double[10];
-            for(int j = 0; j<10; j++)
-                if(trainingNumbers.get(i).number==j)
-                    vec[j] = 1;
-            else
-                  vec[j] = 0;  
-            trainingSet.addRow(new DataSetRow(trainingNumbers.get(i).histogramV,  vec)); 
-        }
-        System.out.println("data set!");
-        neuralNetwork.learn(trainingSet);
-        System.out.println("learnt!");
-        double correct = 0;
-        for(int i = 0; i<elements; i++){
-            neuralNetwork.setInput(testingNumbers.get(i).histogramV); 
-            neuralNetwork.calculate();  
-            double[] networkOutput = neuralNetwork.getOutput();
-            //System.out.println(Arrays.toString(networkOutput));
-            //System.out.println("actual: "+testingNumbers.get(i).number+" ann:"+t);
-            if(Math.abs(networkOutput[testingNumbers.get(i).number]-1) <=0.1)
-                correct++;
-        }
-        System.out.println("Accuracy:"+correct/elements);*/
-        /*
-        neuralNetwork.setInput(1, 1);  
-        neuralNetwork.calculate();  
-        double[] networkOutput = neuralNetwork.getOutput(); 
-        
-        ANN ann = new ANN(new int[]{num,100,10});
-        
-        for(int i = 0; i<1000; i++)
-            ann.train(trainingNumbers.get(i));
-        
-        double correct = 0;
-        for(int i = 0; i<1000; i++){
-            int t = ann.test(testingNumbers.get(i));
-            System.out.println("actual: "+testingNumbers.get(i).number+" ann:"+t);
-            if(testingNumbers.get(i).number == t)
-                correct++;
-        }
-        System.out.println("Accuracy:"+correct/1000);
-        */
     }
 
     
