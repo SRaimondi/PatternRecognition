@@ -89,9 +89,9 @@ public class Input{
         }
         
         BasicNetwork network = new BasicNetwork(); 
-        network.addLayer(new BasicLayer(null ,false,featureSize));
-        network.addLayer(new BasicLayer(new ActivationSigmoid() ,false,100)); 
-        network.addLayer(new BasicLayer(new ActivationSigmoid() ,false ,10)); 
+        network.addLayer(new BasicLayer(null, true, featureSize));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 100)); 
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, 10)); 
         network. getStructure().finalizeStructure(); 
         network. reset();        
         
