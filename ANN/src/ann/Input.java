@@ -1,17 +1,34 @@
 package ann;
 
+import ann.util.Number;
+import ann.util.Utility;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.imageio.ImageIO;
+import org.neuroph.core.NeuralNetwork;
+import org.neuroph.core.data.DataSet;
+import org.neuroph.core.data.DataSetRow;
+import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.Perceptron;
+
 
 public class Input{
         
     
     public static void main(String[] args)throws IOException{
-        
+
+        BufferedImage im = ImageIO.read(Input.class.getResourceAsStream("image.png"));
+
+        im = Utility.binarize(im);
+        File outputfile = new File("src/ann/bw.png");
+        ImageIO.write(im, "png", outputfile);
+        System.out.println("done");
         
         BufferedReader train = new BufferedReader(new InputStreamReader(Input.class.getResourceAsStream("train.csv")));
         BufferedReader test = new BufferedReader(new InputStreamReader(Input.class.getResourceAsStream("test.csv")));
@@ -31,54 +48,83 @@ public class Input{
         for(int i = 0; i<testing.size(); i++)
             testingNumbers.add(new Number(testing.get(i)));
         
-        int num = trainingNumbers.get(0).lined.length;
+        normalize(trainingNumbers);
+        normalize(testingNumbers);
+        
+        int num = trainingNumbers.get(0).histogramV.length;
+        
+                            
+         /*
+        NeuralNetwork neuralNetwork = new Perceptron(2, 1);  
+        DataSet trainingSet = new  DataSet(2, 1);
+        trainingSet.addRow (new DataSetRow (new double[]{0, 0},  new double[]{0})); 
+        trainingSet.addRow (new DataSetRow (new double[]{0, 1},  new double[]{1})); 
+        trainingSet.addRow (new DataSetRow (new double[]{1, 0},  new double[]{2})); 
+        trainingSet.addRow (new DataSetRow (new double[]{1, 1},  new double[]{1})); 
+
+        neuralNetwork.learn(trainingSet);
+        neuralNetwork.setInput(1, 0);  
+        neuralNetwork.calculate();  
+        double[] networkOutput = neuralNetwork.getOutput();
+        System.out.println(Arrays.toString(networkOutput));
+        
+        /**/
+       
+        NeuralNetwork neuralNetwork = new MultiLayerPerceptron(num,10); 
+        DataSet trainingSet = new  DataSet(num, 10);
+        int elements = 100;
+        
+        for(int i = 0; i<elements; i++){
+            double[] vec = new double[10];
+            for(int j = 0; j<10; j++)
+                if(trainingNumbers.get(i).number==j)
+                    vec[j] = 1;
+            else
+                  vec[j] = 0;  
+            trainingSet.addRow(new DataSetRow(trainingNumbers.get(i).histogramV,  vec)); 
+        }
+        System.out.println("data set!");
+        neuralNetwork.learn(trainingSet);
+        System.out.println("learnt!");
+        double correct = 0;
+        for(int i = 0; i<elements; i++){
+            neuralNetwork.setInput(testingNumbers.get(i).histogramV); 
+            neuralNetwork.calculate();  
+            double[] networkOutput = neuralNetwork.getOutput();
+            //System.out.println(Arrays.toString(networkOutput));
+            //System.out.println("actual: "+testingNumbers.get(i).number+" ann:"+t);
+            if(Math.abs(networkOutput[testingNumbers.get(i).number]-1) <=0.1)
+                correct++;
+        }
+        System.out.println("Accuracy:"+correct/elements);
+        /*
+        neuralNetwork.setInput(1, 1);  
+        neuralNetwork.calculate();  
+        double[] networkOutput = neuralNetwork.getOutput(); 
+        
         ANN ann = new ANN(new int[]{num,100,10});
         
-        for(int i = 0; i<5000; i++)
+        for(int i = 0; i<1000; i++)
             ann.train(trainingNumbers.get(i));
         
         double correct = 0;
-        for(int i = 0; i<5000; i++){
+        for(int i = 0; i<1000; i++){
             int t = ann.test(testingNumbers.get(i));
             System.out.println("actual: "+testingNumbers.get(i).number+" ann:"+t);
             if(testingNumbers.get(i).number == t)
                 correct++;
         }
-        System.out.println("Accuracy:"+correct/5000);
-        
+        System.out.println("Accuracy:"+correct/1000);
+        */
     }
-    public static class Number{
-        static int imageSize = 28;
-        final int number;
-        public int[] lined = new int[imageSize*imageSize];
-        int[][] picture = new int[imageSize][imageSize];
-        Number(String line){
-            String[] data = line.split(",");
-            number = Integer.parseInt(data[0]);
-            for(int i = 0; i<imageSize*imageSize; i++){
-                int t = Integer.parseInt(data[i+1]);
-                lined[i] = t;
-                picture[i%imageSize][i/imageSize] = t; //data[i+1] since data[0] is the number 
-            }
-        }
-        public BufferedImage getImage(){
-            BufferedImage graph = new BufferedImage( imageSize, imageSize, BufferedImage.TYPE_INT_RGB);
-            for(int i = 0; i<imageSize; i++) 
-                for(int k = 0; k<imageSize; k++) 
-                    graph.setRGB(i, k, greyToRGB(picture[i][k]));
-            return graph;
-        }
-        private int greyToRGB(int grey){
-            if(grey == 0)
-                return 0xFFFFFF;
-            int rgb = 0;
-            rgb -= grey;
-            rgb = rgb << 8;
-            rgb -= grey; 
-            rgb = rgb << 8;
-            rgb -= grey; 
-            return rgb;
-        }
 
+    private static void normalize(List<Number> num){
+        double min = 0; 
+        double max = 255;
+        for(Number n : num)
+            for(int i = 0; i<n.lined.length; i++)
+                n.lined[i] = n.lined[i] /255;
+                
     }
+    
 }
