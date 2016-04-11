@@ -10,12 +10,15 @@ public class Number {
     public final int number;
     public double[] lined = new double[imageSize*imageSize];
     public int[][] picture = new int[imageSize][imageSize];
+    public double[][] features = new  double[6][imageSize];
+    /*
     public double[] histogramV = new  double[imageSize];
     public double[] histogramH = new  double[imageSize];
     public double[] transitionsV = new  double[imageSize];
     public double[] transitionsH = new  double[imageSize];
     public double[] firstBlackV = new double[imageSize];
     public double[] firstBlackH = new double[imageSize];
+    */
     public Number(String line){
         String[] data = line.split(",");
         number = Integer.parseInt(data[0]);
@@ -24,12 +27,20 @@ public class Number {
             lined[i] = t;
             picture[i%imageSize][i/imageSize] = t; //data[i+1] since data[0] is the number 
         }
+        features[0] = histogramV(picture);
+        features[1] = histogramH(picture);
+        features[2] = transitionsV(picture);
+        features[3] = transitionsH(picture);
+        features[4] = firstBlackV(picture);
+        features[5] = firstBlackH(picture);
+        /*
         histogramV = histogramV(picture);
         histogramH = histogramH(picture);
         transitionsV = transitionsV(picture);
         transitionsH = transitionsH(picture);
         firstBlackV = firstBlackV(picture);
         firstBlackH = firstBlackH(picture);
+        */
     }
     public BufferedImage getImage(){
         BufferedImage graph = new BufferedImage( imageSize, imageSize, BufferedImage.TYPE_INT_RGB);

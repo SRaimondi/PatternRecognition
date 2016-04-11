@@ -20,6 +20,26 @@ public class Utility {
         return index;
     }
     
+    public static double[] concat(double[] arr1, double[] arr2){
+        double[] arr = new double[arr1.length+arr2.length];
+        for(int i = 0; i<arr1.length; i++)
+            arr[i] = arr1[i];     
+        for(int i = arr1.length; i<(arr1.length+arr2.length); i++)
+            arr[i] = arr2[i-arr1.length];   
+        return arr;
+    }
+    public static double[] concat(double[]... arr1){
+        int totalLength = 0;
+        for(double[] a: arr1)
+            totalLength += a.length;
+        double[] arr = new double[totalLength];
+        int pos = 0;
+        for(int i = 0; i<arr1.length; i++)
+            for(int k = 0; k<arr1[i].length; k++){
+                arr[pos++] = arr1[i][k];     
+            }  
+        return arr;
+    }
     public static double[] addUpDiv(double by, double[] arr1, double[]... arrays){
         double[] arr = Arrays.copyOf(arr1,arr1.length);
         for(double[] a: arrays)
