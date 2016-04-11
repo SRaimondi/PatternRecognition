@@ -78,14 +78,17 @@ public class Utility {
         int red;
         int newPixel;
 
-        int threshold = otsuTreshold(original);
+        // int threshold = otsuTreshold(original);
+        int threshold = (int)sauvolaThreshold(original);
 
         BufferedImage binarized = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
 
         for(int i=0; i<original.getWidth(); i++) {
             for(int j=0; j<original.getHeight(); j++) {
                 // Get pixels
-                red = new Color(original.getRGB(i, j)).getRed();
+                // red = new Color(original.getRGB(i, j)).getRed();
+                Color pixel_color = new Color(original.getRGB(i, j));
+                red = (int)(0.299f * pixel_color.getRed() + 0.587f * pixel_color.getGreen() + 0.114f * pixel_color.getBlue());                 
                 int alpha = new Color(original.getRGB(i, j)).getAlpha();
                 if(red > threshold) {
                     newPixel = 255;
@@ -136,6 +139,50 @@ public class Utility {
         return threshold;
 
     }    
+    
+    public static float sauvolaThreshold(BufferedImage image) {
+        float m = mean(image);
+        float std_dev = (float)Math.sqrt(variance(image));
+        float k = 0.3f;
+        
+        return (m * (1.f + k * ((std_dev / 128.f) - 1.f)));
+    }
+    
+    public static float mean(BufferedImage image) {
+        float sum = 0.f;
+        
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) {
+                // Get pixel color
+                Color pixel_color = new Color(image.getRGB(i, j));
+                // Convert to gray scale
+                float gray_scale = 0.299f * pixel_color.getRed() + 0.587f * pixel_color.getGreen() + 0.114f * pixel_color.getBlue();
+                sum += gray_scale;
+            }
+        }
+        
+        return (sum / (float)(image.getWidth() * image.getHeight()));
+    }
+    
+    public static float variance(BufferedImage image) {
+        float m = mean(image);
+        
+        float var = 0.f;
+        
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) {
+                // Get pixel color
+                Color pixel_color = new Color(image.getRGB(i, j));
+                // Convert to gray scale
+                float gray_scale = 0.299f * pixel_color.getRed() + 0.587f * pixel_color.getGreen() + 0.114f * pixel_color.getBlue();
+                // Compute element difference
+                float diff = gray_scale - m;
+                var += diff * diff;
+            }
+        }
+        
+        return (var / (float)(image.getWidth() * image.getHeight()));
+    }
 
     // Return histogram of grayscale image
     public static int[] imageHistogram(BufferedImage input) {
@@ -145,13 +192,16 @@ public class Utility {
  
         for(int i=0; i<input.getWidth(); i++) {
             for(int j=0; j<input.getHeight(); j++) {
-                int red = new Color(input.getRGB (i, j)).getRed();
-                histogram[red]++;
+                Color pixel_color = new Color(input.getRGB(i, j));
+                // int gray_scale = pixel_color.getRed();
+                int gray_scale = (int)(0.299f * pixel_color.getRed() + 0.587f * pixel_color.getGreen() + 0.114f * pixel_color.getBlue()); 
+                histogram[gray_scale]++;
             }
         }
  
         return histogram;
     }
+    
     // Convert R, G, B, Alpha to standard 8 bit
     private static int colorToRGB(int alpha, int red, int green, int blue) {
         int newPixel = 0;
