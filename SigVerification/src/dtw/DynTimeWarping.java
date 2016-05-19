@@ -29,22 +29,22 @@ public class DynTimeWarping {
         float[][] DTW_matrix = new float[n][m];
 
         // Initialize matrix
-        DTW_matrix[0][0] = DistanceMetrics.EulerDistance(input_vectors_1[0], input_vectors_2[0]);
+        DTW_matrix[0][0] = DistanceMetrics.EuclideanDistance(input_vectors_1[0], input_vectors_2[0]);
         
         for (int i = 1; i < n; i++) {
             DTW_matrix[i][0] =  DTW_matrix[i - 1][0] + 
-                                DistanceMetrics.EulerDistance(input_vectors_1[i], input_vectors_2[0]);
+                                DistanceMetrics.EuclideanDistance(input_vectors_1[i], input_vectors_2[0]);
         }
         for (int j = 1; j < m; j++) {
             DTW_matrix[0][j] =  DTW_matrix[0][j - 1] + 
-                                DistanceMetrics.EulerDistance(input_vectors_1[0], input_vectors_2[j]);
+                                DistanceMetrics.EuclideanDistance(input_vectors_1[0], input_vectors_2[j]);
         }
         
         // Compute DTW
         for (int i = 1; i < n; i++) {
             for (int j = 1; j < m; j++) {
                 // Compute distance between the two feature vectors
-                float distance = DistanceMetrics.EulerDistance(input_vectors_1[i], input_vectors_2[j]);
+                float distance = DistanceMetrics.EuclideanDistance(input_vectors_1[i], input_vectors_2[j]);
                 
                 // Compute new entry in the DTW matrix
                 DTW_matrix[i][j] = distance + minimum(  DTW_matrix[i - 1][j],

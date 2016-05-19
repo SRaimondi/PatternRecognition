@@ -13,12 +13,12 @@ package utils;
  */
 public class DistanceMetrics {
     /**
-     * Computes Euler distance between two vector
+     * Computes Euclidean distance between two vector
      * @param v1 Input vector one
      * @param v2 Input vector two
-     * @return Euler distance between v1 and v2
+     * @return Euclidean distance between v1 and v2
      */
-    static public float EulerDistance(final float[] v1, final float[] v2) {
+    static public float EuclideanDistance(final float[] v1, final float[] v2) {
         // Check that vectors are of the same size
         assert(v1.length == v2.length);
         // Compute Euler distance
