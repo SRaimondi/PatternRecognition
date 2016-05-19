@@ -22,7 +22,10 @@ public class SigVerification {
     public static void main(String[] args) {
         try {
             Signature sig1 = SigReader.readSignature("../../Signature_data/enrollment/001-g-01.txt");
-            Signature sig2 = SigReader.readSignature("../../Signature_data/enrollment/001-g-02.txt");
+            Signature sig2 = SigReader.readSignature("../../Signature_data/enrollment/003-g-02.txt");
+            
+            sig1.normalizeData();
+            sig2.normalizeData();
             
             // Try to compute distance 
             float[][] f_v_1 = sig1.featureVectors();

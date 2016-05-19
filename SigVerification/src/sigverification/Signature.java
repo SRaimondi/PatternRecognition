@@ -52,16 +52,21 @@ public class Signature {
     /**
      * Size of the feature vector
      */
-    static private final int FEATURE_VECTOR_SIZE = 5;
+    static private final int FEATURE_VECTOR_SIZE = 8;
     
     /**
      * Position of the elements in the feature vector
      */
-    static private final int POS_X = 0;
-    static private final int POS_Y = 1;
-    static private final int V_X = 2;
-    static private final int V_Y = 3;
-    static private final int PRESSURE = 4;
+    // static private final int POS_X = 0;
+    // static private final int POS_Y = 1;
+    static private final int V_X = 0;
+    static private final int V_Y = 1;
+    static private final int PRESSURE = 2;
+    static private final int PRESSURE_CHANGE = 3;
+    static private final int AZ = 4;
+    static private final int AZ_CHANGE = 5;
+    static private final int INC = 6;
+    static private final int INC_CHANGE = 7;
     
     /**
      * Define boundaries for the input values,
@@ -175,15 +180,28 @@ public class Signature {
         // Create feature vector, as suggested in the slides
         float feature_vec[] = new float[FEATURE_VECTOR_SIZE];
         
-        // Insert position in the vetor
-        feature_vec[POS_X] = pen_position[index].x;
-        feature_vec[POS_Y] = pen_position[index].y;
+        // Insert position in the vector
+        //feature_vec[POS_X] = pen_position[index].x;
+        // feature_vec[POS_Y] = pen_position[index].y;
+        
+        // Set pressure in feature vector
+        feature_vec[PRESSURE] = pressure[index];
+        
+        // Set azimuth in feature vector
+        feature_vec[AZ] = azimuth[index];
+        
+        // Set inclination in feature vector
+        feature_vec[INC] = inclination[index];
         
         // Compute velocities to the next time step
-        // Check if we are at the last element, then we set the speed to 0
+        // Check if we are at the last element, then we set the speeds to 0
         if (index == size - 1) {
             feature_vec[V_X] = 0.f;
             feature_vec[V_Y] = 0.f;
+            
+            feature_vec[PRESSURE_CHANGE] = 0.f;
+            feature_vec[AZ_CHANGE] = 0.f;
+            feature_vec[INC_CHANGE] = 0.f;
         } else {
             // Compute speeds
             Point2f delta = new Point2f(pen_position[index + 1]);
@@ -197,10 +215,14 @@ public class Signature {
             // Set speed values
             feature_vec[V_X] = delta.x;
             feature_vec[V_Y] = delta.y;
+            
+            // Compute pression change
+            feature_vec[PRESSURE_CHANGE] = (pressure[index + 1] - pressure[index]) / delta_t;
+            
+            // Compute azimuth and inclination change
+            feature_vec[AZ_CHANGE] = (azimuth[index + 1] - azimuth[index]) / delta_t;
+            feature_vec[INC_CHANGE] = (inclination[index + 1] - inclination[index]) / delta_t;
         }
-        
-        // Set pressure in feature vector
-        feature_vec[PRESSURE] = pressure[index];
         
         return feature_vec;
     }
