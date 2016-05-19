@@ -64,6 +64,17 @@ public class Signature {
     static private final int PRESSURE = 4;
     
     /**
+     * Define boundaries for the input values,
+     * taken from the paper on the data at page 3
+     */
+    static private final float P_MIN = 0.f;
+    static private final float P_MAX = 1024.f;
+    static private final float AZ_MIN = 0.f;
+    static private final float AZ_MAX = 360.f;
+    static private final float INC_MIN = 30.f;
+    static private final float INC_MAX = 90.f;
+    
+    /**
      * Constructor that allocates space for the signature data
      * @param num_entries Number of entries for the signature
      */
@@ -134,6 +145,25 @@ public class Signature {
         }
         
         return vectors;
+    }
+    
+    /**
+     * Normalize the following data in the Signature
+     * 
+     * pressure,
+     * azimuth and inclination ->   normalized between 0 and 1
+     *                              according to the local minimum and maximum
+     */
+    public void normalizeData() {
+        // Normalize the data of the siganture
+        for (int i = 0; i < size; i++) {            
+            // Normalize pressure
+            pressure[i] = (pressure[i] - P_MIN) / (P_MAX - P_MIN);
+            
+            // Normalize azimuth and inclination
+            azimuth[i] = (azimuth[i] - AZ_MIN) / (AZ_MAX - AZ_MIN);
+            inclination[i] = (inclination[i] - INC_MIN) / (INC_MAX - INC_MIN);
+        }
     }
     
     /**
