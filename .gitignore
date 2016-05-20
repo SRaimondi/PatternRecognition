@@ -16,3 +16,5 @@ hs_err_pid*
 /ANN/nbproject/private/
 /ANN/build/
 /ANN/dist/
+/SigVerification/nbproject/private/
+/SigVerification/build/

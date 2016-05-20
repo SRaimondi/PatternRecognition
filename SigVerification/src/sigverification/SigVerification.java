@@ -84,6 +84,7 @@ public class SigVerification {
         // Create file for output
         PrintWriter out;
         try {
+            // Output file
             out = new PrintWriter("../../Signature_dissimilarty.txt");
             
             // Create list to store the info for the signature
