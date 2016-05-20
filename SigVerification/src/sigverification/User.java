@@ -14,17 +14,12 @@ import reader.SigReader;
  * @author Cedric
  */
 public class User {
-//String containing the user's ID according to the 'users.txt'-file
-
-    final String UserID;
-//number of genuine signatures
-    final int numberGS;
-//number of signatures to verify
-    final int numberVS;
-//array containing the genuine signatures
-    Signature[] genuineSignatures;
-//arry containing the signatures to verify
-    Signature[] verificationSignatures;
+    // String containing the user's ID according to the 'users.txt'-file
+    private final String UserID;
+    // Array containing the genuine signatures
+    private final Signature[] genuineSignatures;
+    // Arry containing the signatures to verify
+    private final Signature[] verificationSignatures;
 
     /**
      * Constructor
@@ -35,17 +30,23 @@ public class User {
      */
     public User(String UserID, int numberGS, int numberVS) {
         this.UserID = UserID;
-        this.numberGS = numberGS;
-        this.numberVS = numberVS;
         //allocate space for the arrays
         genuineSignatures = new Signature[numberGS];
         verificationSignatures = new Signature[numberVS];
         //get the signatures
-        this.initializeUser();
+        this.initializeUser(numberGS, numberVS);
+    }
+    
+    /**
+     * Returns the UserID
+     * @return A String containing the user ID
+     */
+    public String getUserID() {
+        return UserID;
     }
 
     /**
-     * returns the array containing the genuine signatures
+     * Returns the array containing the genuine signatures
      *
      * @return Signature array containing the genuine signatures
      */
@@ -54,7 +55,7 @@ public class User {
     }
 
     /**
-     * returns the array containing the signatures to verify
+     * Returns the array containing the signatures to verify
      *
      * @return Signature array containing the signatures to verify
      */
@@ -63,12 +64,12 @@ public class User {
     }
 
     /**
-     * read out all the signatures and put them into the corresponding array
+     * Read out all the signatures and put them into the corresponding array
      */
-    private void initializeUser() {
+    private void initializeUser(final int numberGS, final int numberVS) {
         Signature sig;
 
-        //read out all genuine signatures and put them into genuineSignatures[]
+        // Read out all genuine signatures and put them into genuineSignatures[]
         for (int i = 1; i <= numberGS; i++) {
             try {
                 if (i < 10) {
@@ -86,7 +87,7 @@ public class User {
 
         }
 
-        //read out all signatures to verify and put them into verificationSignatures[]
+        // Read out all signatures to verify and put them into verificationSignatures[]
         for (int i = 1; i <= numberVS; i++) {
             try {
                 if (i < 10) {

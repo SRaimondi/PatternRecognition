@@ -57,8 +57,6 @@ public class Signature {
     /**
      * Position of the elements in the feature vector
      */
-    // static private final int POS_X = 0;
-    // static private final int POS_Y = 1;
     static private final int V_X = 0;
     static private final int V_Y = 1;
     static private final int PRESSURE = 2;
@@ -179,10 +177,6 @@ public class Signature {
     private float[] createFeatureVectorAt(final int index) {
         // Create feature vector, as suggested in the slides
         float feature_vec[] = new float[FEATURE_VECTOR_SIZE];
-        
-        // Insert position in the vector
-        //feature_vec[POS_X] = pen_position[index].x;
-        // feature_vec[POS_Y] = pen_position[index].y;
         
         // Set pressure in feature vector
         feature_vec[PRESSURE] = pressure[index];
