@@ -70,10 +70,10 @@ public class SigVerification {
             String line;
 
             while ((line = br.readLine()) != null) {
-                //create new User using the current line as UserID and hardcoded values for the number of genuine Signatures and number of Signatures to verify
+                // Create new User using the current line as UserID and hardcoded
+                // values for the number of genuine Signatures and number of Signatures to verify
                 User user = new User(line, NUMBER_GS, NUMBER_VS);
                 Users.add(user);
-
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SigVerification.class.getName()).log(Level.SEVERE, null, ex);
@@ -102,13 +102,14 @@ public class SigVerification {
                         float[][] ver_sig_vec = user.getVerificationSignatures()[ver_sig].featureVectors();
                         // Compute distance
                         float[][] DTW_M = DynTimeWarping.DTWDistance(gen_sig_vec, ver_sig_vec);
-                        // Get distance in corner element
-                        float distance = DTW_M[DTW_M.length - 1][DTW_M[0].length - 1];
                         // Insert data into signature information list
                         SignatureInfo info = new SignatureInfo();
-                        info.distance = distance;
+                        // Get distance from corner element
+                        info.distance = DTW_M[DTW_M.length - 1][DTW_M[0].length - 1];
+                        // Set genuine and verification ids
                         info.verification_sig_id = ver_sig + 1;
                         info.genuine_sig_id = gen_sig + 1;
+                        // Add info to the list
                         signature_infos.add(info);
                     }
                     
