@@ -86,13 +86,16 @@ public class SigVerification {
         try {
             out = new PrintWriter("../../Signature_dissimilarty.txt");
             
+            // Create list to store the info for the signature
+            ArrayList<SignatureInfo> signature_infos = new ArrayList<>();
+            
             // Loop over all user and compute the dissimilarty 
             // between the genuine signature and the verification signature
             for (User user : Users) {                
                 // Loop over all the genuine signature
                 for (int gen_sig = 0; gen_sig < NUMBER_GS; gen_sig++) {
-                    // Create list to store the info for the signature
-                    ArrayList<SignatureInfo> signature_infos = new ArrayList<>();
+                    // Clear list to store the info for the signature
+                    signature_infos.clear();
                     // Get genuine signature feature vector
                     float[][] gen_sig_vec = user.getGenuineSignatures()[gen_sig].featureVectors();
                     
