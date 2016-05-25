@@ -27,14 +27,15 @@ public class User {
      * @param UserID ID of the user according to the users.txt
      * @param numberGS Number of genuine signatures
      * @param numberVS Number of signatures that need verification
+     * @param path Path for file location
      */
-    public User(String UserID, int numberGS, int numberVS) {
+    public User(String UserID, int numberGS, int numberVS, final String path) {
         this.UserID = UserID;
         //allocate space for the arrays
         genuineSignatures = new Signature[numberGS];
         verificationSignatures = new Signature[numberVS];
         //get the signatures
-        this.initializeUser(numberGS, numberVS);
+        this.initializeUser(numberGS, numberVS, path);
     }
     
     /**
@@ -66,16 +67,16 @@ public class User {
     /**
      * Read out all the signatures and put them into the corresponding array
      */
-    private void initializeUser(final int numberGS, final int numberVS) {
+    private void initializeUser(final int numberGS, final int numberVS, final String path) {
         Signature sig;
 
         // Read out all genuine signatures and put them into genuineSignatures[]
         for (int i = 1; i <= numberGS; i++) {
             try {
                 if (i < 10) {
-                    sig = SigReader.readSignature("../../Signature_data/enrollment/" + UserID + "-g-0" + i + ".txt");
+                    sig = SigReader.readSignature(path + "enrollment/" + UserID + "-g-0" + i + ".txt");
                 } else {
-                    sig = SigReader.readSignature("../../Signature_data/enrollment/" + UserID + "-g-" + i + ".txt");
+                    sig = SigReader.readSignature(path + "/enrollment/" + UserID + "-g-" + i + ".txt");
                 }
 
                 sig.normalizeData();
@@ -91,9 +92,9 @@ public class User {
         for (int i = 1; i <= numberVS; i++) {
             try {
                 if (i < 10) {
-                    sig = SigReader.readSignature("../../Signature_data/verification/" + UserID + "-0" + i + ".txt");
+                    sig = SigReader.readSignature(path + "verification/" + UserID + "-0" + i + ".txt");
                 } else {
-                    sig = SigReader.readSignature("../../Signature_data/verification/" + UserID + "-" + i + ".txt");
+                    sig = SigReader.readSignature(path + "verification/" + UserID + "-" + i + ".txt");
                 }
 
                 sig.normalizeData();
